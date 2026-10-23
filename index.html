@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EPD Studio | 概念機械數位系統中心</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome 6 CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: 工業無襯線與科幻技術字型 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syncopate:wght@400;700&family=JetBrains+Mono:wght@300;400;500;600&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        mech: {
+                            50: '#FAFBFD',
+                            100: '#F0F2F6',
+                            200: '#E2E6ED',
+                            300: '#C8CFDC',
+                            400: '#8E9AA8',
+                            500: '#5A6578',
+                            800: '#1A1E24',
+                            900: '#0F1216',
+                            carbon: '#121418',
+                            cyanGlow: '#00D8F6'
+                        }
+                    },
+                    fontFamily: {
+                        syncopate: ['Syncopate', 'sans-serif'],
+                        tech: ['Space Grotesk', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                        sans: ['Noto Sans TC', 'Space Grotesk', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* 概念設計背景：攝影棚柔光漸層與微細精密點陣 */
+        body {
+            background-color: #ECEEF2;
+            background-image: 
+                radial-gradient(circle at 50% 0%, #FFFFFF 0%, rgba(240, 242, 247, 0.8) 45%, #E1E5EC 100%),
+                radial-gradient(#C5CCD8 1px, transparent 1px);
+            background-size: 100% 100%, 32px 32px;
+            background-attachment: fixed;
+            color: #171B21;
+        }
+
+        /* 碳纖維紋理裝飾塊 */
+        .carbon-pattern {
+            background-color: #12151A;
+            background-image: 
+                linear-gradient(45deg, #181C23 25%, transparent 25%), 
+                linear-gradient(-45deg, #181C23 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #181C23 75%), 
+                linear-gradient(-45deg, transparent 75%, #181C23 75%);
+            background-size: 6px 6px;
+            background-position: 0 0, 0 3px, 3px -3px, -3px 0px;
+        }
+
+        /* 白色機械化面板 (Industrial White Mech Panel) */
+        .mech-card {
+            background: linear-gradient(145deg, #FFFFFF 0%, #F5F7FA 100%);
+            border: 1px solid #D6DCE6;
+            box-shadow: 
+                0 4px 6px -1px rgba(0, 0, 0, 0.04),
+                0 14px 28px -4px rgba(18, 24, 38, 0.07),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            position: relative;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .mech-card:hover {
+            transform: translateY(-4px);
+            border-color: #B5BFD0;
+            box-shadow: 
+                0 18px 36px -6px rgba(15, 20, 32, 0.12),
+                0 0 0 1px rgba(255, 255, 255, 0.8) inset,
+                0 0 20px rgba(0, 216, 246, 0.15);
+        }
+
+        /* 機械精密卡片刻線細節 */
+        .mech-corner-mark {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            pointer-events: none;
+        }
+        .mech-corner-tl {
+            top: 6px; left: 6px;
+            border-top: 1.5px solid #8E9AA8;
+            border-left: 1.5px solid #8E9AA8;
+        }
+        .mech-corner-br {
+            bottom: 6px; right: 6px;
+            border-bottom: 1.5px solid #8E9AA8;
+            border-right: 1.5px solid #8E9AA8;
+        }
+
+        /* 白色機械風格按鈕與「滑動雷射光束動畫」 */
+        .mech-btn {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(180deg, #FFFFFF 0%, #ECEFF4 100%);
+            border: 1px solid #CFD6E2;
+            box-shadow: 
+                0 2px 4px rgba(0, 0, 0, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.04);
+            transition: all 0.25s ease;
+        }
+
+        .mech-btn:hover {
+            background: linear-gradient(180deg, #FFFFFF 0%, #F5F7FA 100%);
+            border-color: #0F1216;
+            color: #0F1216;
+            transform: translateY(-1px);
+            box-shadow: 
+                0 6px 14px rgba(0, 0, 0, 0.09),
+                0 0 12px rgba(0, 216, 246, 0.2);
+        }
+
+        /* 滑過時的高速掠射光線 (Photonic Sheen Beam) */
+        .mech-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -120%;
+            width: 70%;
+            height: 200%;
+            background: linear-gradient(
+                105deg,
+                transparent 20%,
+                rgba(255, 255, 255, 0.6) 45%,
+                rgba(0, 216, 246, 0.85) 50%,
+                rgba(255, 255, 255, 0.9) 55%,
+                transparent 80%
+            );
+            transform: rotate(25deg);
+            pointer-events: none;
+            opacity: 0;
+            filter: drop-shadow(0 0 6px rgba(0, 216, 246, 0.5));
+            transition: none;
+        }
+
+        .mech-btn:hover::after {
+            animation: laserSheen 0.75s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        @keyframes laserSheen {
+            0% {
+                left: -120%;
+                opacity: 0.9;
+            }
+            100% {
+                left: 170%;
+                opacity: 0;
+            }
+        }
+
+        /* 複製小按鈕機械樣式 */
+        .mech-icon-btn {
+            background: #F4F6F9;
+            border: 1px solid #D2D8E3;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            transition: all 0.2s ease;
+        }
+        .mech-icon-btn:hover {
+            background: #121418;
+            color: #FFFFFF;
+            border-color: #121418;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        /* 平滑捲軸 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #ECEEF2;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #C4CCD9;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #8E9AA8;
+        }
+    </style>
+</head>
+<body class="font-sans min-h-screen relative flex flex-col justify-between selection:bg-mech-900 selection:text-white">
+
+    <!-- 頂部科技裝甲導航列 -->
+    <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-mech-300/80 shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
+            
+            <!-- 品牌 Logo 區域 -->
+            <a href="#" class="flex items-center gap-3.5 group">
+                <div class="h-10 sm:h-12 flex items-center">
+                    <img 
+                        src="https://ericpam.github.io/imeages/EPD%20Logo.png" 
+                        alt="EPD Logo" 
+                        class="h-full w-auto object-contain filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.08)] group-hover:scale-[1.02] transition-transform"
+                        onerror="if(this.src!=='images/EPD Logo.png'){this.src='images/EPD Logo.png';}else{this.classList.add('hidden');document.getElementById('logo-fallback').classList.remove('hidden');}"
+                    />
+                    <!-- 備用文字 Logo -->
+                    <div id="logo-fallback" class="hidden font-syncopate font-bold text-2xl tracking-tighter text-mech-900">
+                        EPD<span class="text-xs font-mono font-medium text-mech-400 ml-1.5 px-1.5 py-0.5 bg-mech-200 rounded">SPEC-2126</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- 狀態規格與 GitHub 外部連結 -->
+            <div class="flex items-center gap-3 sm:gap-4 font-mono text-xs">
+                <div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-md bg-mech-100 border border-mech-300 text-mech-500 font-medium">
+                    <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_6px_#10B981]"></span>
+                    <span>CORE.ONLINE // VER 4.2</span>
+                </div>
+
+                <a href="https://github.com/ericpam" target="_blank" rel="noopener noreferrer" 
+                   class="mech-icon-btn px-3.5 py-2 rounded-lg flex items-center gap-2 text-mech-800 font-medium text-xs">
+                    <i class="fab fa-github text-sm"></i>
+                    <span class="font-mono">GITHUB REPO</span>
+                </a>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- 主內容區塊 -->
+    <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14 w-full">
+
+        <!-- 工業概念設計 Hero 區 -->
+        <section class="mb-14 text-center sm:text-left relative">
+            <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 pb-8 border-b border-mech-300/80">
+                
+                <div class="max-w-2xl">
+                    <!-- 頂部概念標籤 -->
+                    <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-mech-900 text-white text-[11px] font-mono tracking-widest uppercase mb-4 shadow-sm">
+                        <span class="w-1.5 h-1.5 rounded-full bg-mech-cyanGlow"></span>
+                        <span>ADVANCED VEHICLE & DIGITAL INTERFACE</span>
+                    </div>
+                    
+                    <h1 class="font-syncopate font-bold text-3xl sm:text-5xl text-mech-900 tracking-tight leading-none mb-4">
+                        EPD <span class="font-light text-mech-400 font-tech">SYSTEMS</span>
+                    </h1>
+                    
+                    <p class="text-mech-500 text-sm sm:text-base leading-relaxed font-sans max-w-xl">
+                        俐落純粹的白色機械化模組入口。整合高精度線上製作系統與免安裝輕量工具，專注極致效率與工藝體驗。
+                    </p>
+                </div>
+
+                <!-- 搜尋過濾器 (概念工藝外觀) -->
+                <div class="w-full lg:w-80">
+                    <div class="text-[10px] font-mono text-mech-400 uppercase mb-1 tracking-wider flex justify-between">
+                        <span>SEARCH MODULE</span>
+                        <span>[CTRL + F]</span>
+                    </div>
+                    <div class="relative">
+                        <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-mech-400 text-xs"></i>
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            placeholder="快速檢索工具名稱..." 
+                            class="w-full pl-9 pr-4 py-2.5 rounded-lg bg-white border border-mech-300 text-sm text-mech-900 placeholder-mech-400 focus:outline-none focus:border-mech-900 focus:ring-1 focus:ring-mech-900 transition-all font-mono shadow-sm"
+                            oninput="filterModules()"
+                        />
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- A 分區：線上系統 (A: ONLINE SYSTEMS) -->
+        <section class="mb-14 section-block" id="block-a">
+            
+            <!-- 分區標頭 -->
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <span class="px-2.5 py-1 rounded bg-mech-900 text-white font-mono font-bold text-xs">
+                        SEC_A
+                    </span>
+                    <h2 class="font-syncopate font-bold text-lg sm:text-xl text-mech-900 tracking-tight">
+                        線上系統
+                    </h2>
+                    <span class="text-xs font-mono text-mech-400 tracking-wider hidden sm:inline-block">/ ONLINE SYSTEMS</span>
+                </div>
+                <div class="font-mono text-xs text-mech-400 tracking-widest">[ 03 MODULES ]</div>
+            </div>
+
+            <!-- 卡片格網 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                <!-- 模組 1: 車牌線上製作系統 -->
+                <div class="module-card mech-card rounded-xl p-6 flex flex-col justify-between" data-search="車牌線上製作系統 汽車 機車 仿真車牌 客製">
+                    <div class="mech-corner-mark mech-corner-tl"></div>
+                    <div class="mech-corner-mark mech-corner-br"></div>
+                    <div>
+                        <!-- 頂部規格列 -->
+                        <div class="flex items-center justify-between mb-5 pb-3 border-b border-mech-200">
+                            <span class="font-mono text-[11px] font-semibold text-mech-400 tracking-wider">MOD_01 // CARPLATE</span>
+                            <div class="w-8 h-8 rounded-lg bg-mech-100 border border-mech-300 flex items-center justify-center text-mech-800 text-sm shadow-sm">
+                                <i class="fas fa-car-side"></i>
+                            </div>
+                        </div>
+
+                        <h3 class="text-lg font-bold text-mech-900 mb-2 tracking-tight group-hover:text-black">
+                            車牌線上製作系統
+                        </h3>
+                        <p class="text-xs sm:text-sm text-mech-500 font-sans leading-relaxed mb-6">
+                            提供標準汽機車高擬真牌照線上生成，支援客製字號排版、微距凸字光影與向量導出。
+                        </p>
+                    </div>
+
+                    <!-- 操作按鈕列 -->
+                    <div class="flex items-center gap-2 pt-4 border-t border-mech-200">
+                        <a href="https://ericpam.github.io/CarPlate/" target="_blank" rel="noopener noreferrer" 
+                           class="mech-btn flex-1 py-2.5 px-4 rounded-lg font-mono text-xs font-semibold text-mech-800 flex items-center justify-center gap-2 group">
+                            <span>LAUNCH SYSTEM</span>
+                            <i class="fas fa-chevron-right text-[10px] transition-transform group-hover:translate-x-1"></i>
+                        </a>
+                        <button onclick="copyLink('https://ericpam.github.io/CarPlate/')" title="複製系統連結" class="mech-icon-btn p-2.5 rounded-lg text-mech-500">
+                            <i class="far fa-copy text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 模組 2: 寵物身分證製作系統 -->
+                <div class="module-card mech-card rounded-xl p-6 flex flex-col justify-between" data-search="寵物身分證製作系統 貓 狗 毛孩 證件 自訂">
+                    <div class="mech-corner-mark mech-corner-tl"></div>
+                    <div class="mech-corner-mark mech-corner-br"></div>
+                    <div>
+                        <!-- 頂部規格列 -->
+                        <div class="flex items-center justify-between mb-5 pb-3 border-b border-mech-200">
+                            <span class="font-mono text-[11px] font-semibold text-mech-400 tracking-wider">MOD_02 // PET-ID</span>
+                            <div class="w-8 h-8 rounded-lg bg-mech-100 border border-mech-300 flex items-center justify-center text-mech-800 text-sm shadow-sm">
+                                <i class="fas fa-paw"></i>
+                            </div>
+                        </div>
+
+                        <h3 class="text-lg font-bold text-mech-900 mb-2 tracking-tight">
+                            寵物身分證製作系統
+                        </h3>
+                        <p class="text-xs sm:text-sm text-mech-500 font-sans leading-relaxed mb-6">
+                            專屬毛孩的身分證件快速排版器，具備寵物大頭貼智慧對齊、個資卡片印製及高解析輸出。
+                        </p>
+                    </div>
+
+                    <!-- 操作按鈕列 -->
+                    <div class="flex items-center gap-2 pt-4 border-t border-mech-200">
+                        <a href="https://ericpam.github.io/PetID/" target="_blank" rel="noopener noreferrer" 
+                           class="mech-btn flex-1 py-2.5 px-4 rounded-lg font-mono text-xs font-semibold text-mech-800 flex items-center justify-center gap-2 group">
+                            <span>LAUNCH SYSTEM</span>
+                            <i class="fas fa-chevron-right text-[10px] transition-transform group-hover:translate-x-1"></i>
+                        </a>
+                        <button onclick="copyLink('https://ericpam.github.io/PetID/')" title="複製系統連結" class="mech-icon-btn p-2.5 rounded-lg text-mech-500">
+                            <i class="far fa-copy text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 模組 3: 寵物健保卡製作系統 -->
+                <div class="module-card mech-card rounded-xl p-6 flex flex-col justify-between" data-search="寵物健保卡製作系統 醫療卡 晶片卡 仿健保卡">
+                    <div class="mech-corner-mark mech-corner-tl"></div>
+                    <div class="mech-corner-mark mech-corner-br"></div>
+                    <div>
+                        <!-- 頂部規格列 -->
+                        <div class="flex items-center justify-between mb-5 pb-3 border-b border-mech-200">
+                            <span class="font-mono text-[11px] font-semibold text-mech-400 tracking-wider">MOD_03 // PET-HEALTH</span>
+                            <div class="w-8 h-8 rounded-lg bg-mech-100 border border-mech-300 flex items-center justify-center text-mech-800 text-sm shadow-sm">
+                                <i class="fas fa-shield-cat"></i>
+                            </div>
+                        </div>
+
+                        <h3 class="text-lg font-bold text-mech-900 mb-2 tracking-tight">
+                            寵物健保卡製作系統
+                        </h3>
+                        <p class="text-xs sm:text-sm text-mech-500 font-sans leading-relaxed mb-6">
+                            擬真全民健保卡設計，支援自訂晶片條紋、疫苗紀錄備註與家庭成員紀念卡面生成。
+                        </p>
+                    </div>
+
+                    <!-- 操作按鈕列 -->
+                    <div class="flex items-center gap-2 pt-4 border-t border-mech-200">
+                        <a href="https://ericpam.github.io/PetHI/" target="_blank" rel="noopener noreferrer" 
+                           class="mech-btn flex-1 py-2.5 px-4 rounded-lg font-mono text-xs font-semibold text-mech-800 flex items-center justify-center gap-2 group">
+                            <span>LAUNCH SYSTEM</span>
+                            <i class="fas fa-chevron-right text-[10px] transition-transform group-hover:translate-x-1"></i>
+                        </a>
+                        <button onclick="copyLink('https://ericpam.github.io/PetHI/')" title="複製系統連結" class="mech-icon-btn p-2.5 rounded-lg text-mech-500">
+                            <i class="far fa-copy text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- B 分區：免費工具 (B: FREE UTILITIES) -->
+        <section class="mb-14 section-block" id="block-b">
+            
+            <!-- 分區標頭 -->
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <span class="px-2.5 py-1 rounded bg-mech-500 text-white font-mono font-bold text-xs">
+                        SEC_B
+                    </span>
+                    <h2 class="font-syncopate font-bold text-lg sm:text-xl text-mech-900 tracking-tight">
+                        免費工具
+                    </h2>
+                    <span class="text-xs font-mono text-mech-400 tracking-wider hidden sm:inline-block">/ FREE UTILITIES</span>
+                </div>
+                <div class="font-mono text-xs text-mech-400 tracking-widest">[ 02 MODULES ]</div>
+            </div>
+
+            <!-- 卡片格網 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <!-- 模組 4: 線上條碼產生器 -->
+                <div class="module-card mech-card rounded-xl p-6 flex flex-col justify-between" data-search="線上條碼產生器 Barcode Code128 EAN 條碼 快速生成">
+                    <div class="mech-corner-mark mech-corner-tl"></div>
+                    <div class="mech-corner-mark mech-corner-br"></div>
+                    <div>
+                        <!-- 頂部規格列 -->
+                        <div class="flex items-center justify-between mb-5 pb-3 border-b border-mech-200">
+                            <span class="font-mono text-[11px] font-semibold text-mech-400 tracking-wider">MOD_04 // BARCODE</span>
+                            <div class="w-8 h-8 rounded-lg bg-mech-100 border border-mech-300 flex items-center justify-center text-mech-800 text-sm shadow-sm">
+                                <i class="fas fa-barcode"></i>
+                            </div>
+                        </div>
+
+                        <h3 class="text-lg font-bold text-mech-900 mb-2 tracking-tight">
+                            線上條碼產生器
+                        </h3>
+                        <p class="text-xs sm:text-sm text-mech-500 font-sans leading-relaxed mb-6">
+                            純瀏覽器端極速條碼產生，支援 Code 128、EAN-13、UPC 等多項國際編碼規格與即時下載。
+                        </p>
+                    </div>
+
+                    <!-- 操作按鈕列 -->
+                    <div class="flex items-center gap-2 pt-4 border-t border-mech-200">
+                        <a href="https://ericpam.github.io/Barcode-Generator/" target="_blank" rel="noopener noreferrer" 
+                           class="mech-btn flex-1 py-2.5 px-4 rounded-lg font-mono text-xs font-semibold text-mech-800 flex items-center justify-center gap-2 group">
+                            <span>OPEN UTILITY</span>
+                            <i class="fas fa-chevron-right text-[10px] transition-transform group-hover:translate-x-1"></i>
+                        </a>
+                        <button onclick="copyLink('https://ericpam.github.io/Barcode-Generator/')" title="複製工具連結" class="mech-icon-btn p-2.5 rounded-lg text-mech-500">
+                            <i class="far fa-copy text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 模組 5: 線上圖片裁切器 -->
+                <div class="module-card mech-card rounded-xl p-6 flex flex-col justify-between" data-search="線上圖片裁切器 圖片縮放 裁剪 轉檔 離線處理 Crop">
+                    <div class="mech-corner-mark mech-corner-tl"></div>
+                    <div class="mech-corner-mark mech-corner-br"></div>
+                    <div>
+                        <!-- 頂部規格列 -->
+                        <div class="flex items-center justify-between mb-5 pb-3 border-b border-mech-200">
+                            <span class="font-mono text-[11px] font-semibold text-mech-400 tracking-wider">MOD_05 // CROP-TOOL</span>
+                            <div class="w-8 h-8 rounded-lg bg-mech-100 border border-mech-300 flex items-center justify-center text-mech-800 text-sm shadow-sm">
+                                <i class="fas fa-crop-simple"></i>
+                            </div>
+                        </div>
+
+                        <h3 class="text-lg font-bold text-mech-900 mb-2 tracking-tight">
+                            線上圖片裁切器
+                        </h3>
+                        <p class="text-xs sm:text-sm text-mech-500 font-sans leading-relaxed mb-6">
+                            本機端無伺服器暫存圖片裁切神器，提供多重比例鎖定、無損旋轉調節與輕量化極速壓縮。
+                        </p>
+                    </div>
+
+                    <!-- 操作按鈕列 -->
+                    <div class="flex items-center gap-2 pt-4 border-t border-mech-200">
+                        <a href="https://ericpam.github.io/EPD-CropTool/" target="_blank" rel="noopener noreferrer" 
+                           class="mech-btn flex-1 py-2.5 px-4 rounded-lg font-mono text-xs font-semibold text-mech-800 flex items-center justify-center gap-2 group">
+                            <span>OPEN UTILITY</span>
+                            <i class="fas fa-chevron-right text-[10px] transition-transform group-hover:translate-x-1"></i>
+                        </a>
+                        <button onclick="copyLink('https://ericpam.github.io/EPD-CropTool/')" title="複製工具連結" class="mech-icon-btn p-2.5 rounded-lg text-mech-500">
+                            <i class="far fa-copy text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 找不到搜尋結果 -->
+        <div id="empty-state" class="hidden text-center py-16 bg-white/60 border border-mech-300 rounded-xl my-6">
+            <i class="fas fa-circle-notch fa-spin text-2xl text-mech-400 mb-3"></i>
+            <p class="font-mono text-xs tracking-wider text-mech-500 uppercase">NO MODULE FOUND MATCHING QUERY</p>
+            <p class="text-xs text-mech-400 mt-1">請嘗試輸入其他關鍵字（如：車牌、身分證、條碼）</p>
+        </div>
+
+    </main>
+
+    <!-- 工業極簡頁尾 -->
+    <footer class="bg-white border-t border-mech-300 py-6 mt-12">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-mech-400">
+            <div class="flex items-center gap-3">
+                <span class="font-bold text-mech-900 tracking-wider">EPD DESIGN CORP</span>
+                <span>/</span>
+                <span>EST. 2026</span>
+                <span>/</span>
+                <span>ALL RIGHTS RESERVED</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="inline-flex items-center gap-1.5 text-mech-500">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> HOSTED ON GITHUB PAGES
+                </span>
+                <a href="#" class="hover:text-mech-900 transition-colors">TOP ↑</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 操作提示吐司通知 (Toast Notification) -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-16 opacity-0 pointer-events-none transition-all duration-300 flex items-center gap-3 bg-mech-900 text-white font-mono text-xs px-4 py-3 rounded-lg shadow-xl border border-mech-800">
+        <i class="fas fa-check text-mech-cyanGlow"></i>
+        <span id="toast-text">LINK COPIED TO CLIPBOARD</span>
+    </div>
+
+    <!-- 腳本 -->
+    <script>
+        // 即時搜尋模組
+        function filterModules() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.module-card');
+            let matchedCount = 0;
+
+            cards.forEach(card => {
+                const searchData = card.getAttribute('data-search').toLowerCase();
+                if (searchData.includes(query)) {
+                    card.style.display = 'flex';
+                    matchedCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // 控制分區顯隱
+            document.querySelectorAll('.section-block').forEach(block => {
+                const visibleInBlock = block.querySelectorAll('.module-card:not([style*="display: none"])');
+                block.style.display = visibleInBlock.length > 0 ? 'block' : 'none';
+            });
+
+            // 無結果提示
+            const emptyNotice = document.getElementById('empty-state');
+            if (matchedCount === 0) {
+                emptyNotice.classList.remove('hidden');
+            } else {
+                emptyNotice.classList.add('hidden');
+            }
+        }
+
+        // 複製連結
+        function copyLink(url) {
+            try {
+                const input = document.createElement('textarea');
+                input.value = url;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+                showNotification('已複製網址：' + url);
+            } catch (err) {
+                showNotification('複製失敗，請手動複製連結');
+            }
+        }
+
+        // 彈跳提示
+        let toastTimer;
+        function showNotification(msg) {
+            const toast = document.getElementById('toast');
+            const toastText = document.getElementById('toast-text');
+            toastText.textContent = msg;
+
+            toast.classList.remove('translate-y-16', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.add('translate-y-16', 'opacity-0');
+                toast.classList.remove('translate-y-0', 'opacity-100');
+            }, 2500);
+        }
+    </script>
+</body>
+</html>
